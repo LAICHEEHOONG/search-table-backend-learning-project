@@ -1,7 +1,7 @@
 const express = require('express');
 let router = express.Router();
 const { Announcement } = require('../../model/testModel');
-const { setEndDate } = require('../../util/tools');
+const { setEndDate, setStartDate, addOneDay } = require('../../util/tools');
 
 
 
@@ -53,7 +53,8 @@ router.route('/')
 
                 res.json([annoucementTimeZoneData, { allPage }]);
             } else if (searhData.endDate === '' || !searhData.endDate) {
-                const startDate = new Date(searhData.startDate);
+                // const startDate = new Date(searhData.startDate);
+                let startDate = setStartDate(searhData.startDate);
                 const searchText = searhData.text;
                 const annoucementTimeZoneData = await Announcement.find({
                     created: {
@@ -87,9 +88,9 @@ router.route('/')
 
                 res.json([annoucementTimeZoneData, { allPage }]);
             } else if (searhData.startDate === '' || !searhData.startDate) {
-
+                let endDate = setEndDate(searhData.endDate);
                 // const endDate = addOneDay(new Date(searhData.endDate));
-                const endDate = setEndDate(searhData.endDate);
+                // const endDate = setEndDate(searhData.endDate);
                 // const endDate = new Date(searhData.endDate);
                 const searchText = searhData.text;
                 const annoucementTimeZoneData = await Announcement.find({
@@ -122,10 +123,11 @@ router.route('/')
                 allPage = Math.ceil(allPage.length / 15);
                 res.json([annoucementTimeZoneData, { allPage }]);
             } else {
-                const startDate = new Date(searhData.startDate);
+                const startDate = setStartDate(searhData.startDate);
                 const endDate = setEndDate(searhData.endDate);
+                // const startDate = new Date(searhData.startDate);
+                // const endDate = setEndDate(searhData.endDate);
                 // const endDate = addOneDay(new Date(searhData.endDate));
-               
                 // const endDate = new Date(searhData.endDate);
                 const searchText = searhData.text;
                 const annoucementTimeZoneData = await Announcement.find({

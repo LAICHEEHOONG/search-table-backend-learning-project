@@ -14,9 +14,24 @@ function setEndDate(date) {
     let endDate = new Date(date);
     endDate = endDate.setHours(23, 59, 59, 999);
     endDate = new Date(endDate);
-
-    console.log(endDate);
+    // endDate = toMalaysiaTime(endDate);
+    // console.log(`endDate: ${endDate}`);
     return endDate;
+}
+
+function setStartDate(date) {
+    let startDate = new Date(date);
+    startDate = startDate.setHours(0, 0, 0, 0);
+    startDate = new Date(startDate);
+    // startDate = toMalaysiaTime(startDate);
+    // console.log(`startDate: ${startDate}`);
+    return startDate;
+}
+
+function toMalaysiaTime(date) {
+    const dateInUTC = date;
+    const malaysiaTime = new Date(dateInUTC.getTime() + (8 * 60 * 60 * 1000)); 
+    return malaysiaTime;
 }
 
 // let testingEndDate = new Date(searhData.endDate);
@@ -25,5 +40,6 @@ function setEndDate(date) {
 
 module.exports = {
     addOneDay,
-    setEndDate
+    setEndDate,
+    setStartDate
 };
