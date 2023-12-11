@@ -1,0 +1,98 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Output of npm
+npm-debug.log
+
+# Optional npm cache directory
+.npm
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# macOS
+.DS_Store
+
+# WebStorm
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Yarn
+yarn-error.log
+
+# Environment files
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Jest coverage directory
+coverage/
+
+# Parcel
+.cache/
+
+# Next.js
+.next/
+
+# Nuxt.js
+.nuxt/
+
+# Gatbsy
+.cache/
+public/sw.js
+sw.ts
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt/
+
+# Vuepress
+.vuepress/dist
+
+# Svelte
+__sapper__/
+
+# Jekyll
+_site/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono development
+mono_crash.*
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk

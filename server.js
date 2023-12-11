@@ -1,8 +1,9 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const mongoose = require('mongoose')
-const mongoUri = `mongodb+srv://n6situsr2022:1QbAA5b4lBg9c7xX@clustersit.wjuit.mongodb.net/trrappdb?retryWrites=true&w=majority`;
+const mongoose = require('mongoose');
+require('dotenv').config();
+const mongoUri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}`;
 
 const pages = require('./routes/api/page');
 const search = require('./routes/api/find');
