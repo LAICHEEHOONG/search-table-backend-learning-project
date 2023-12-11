@@ -1,7 +1,7 @@
 const express = require('express');
 let router = express.Router();
 
-const { Announcement } = require('../../model/testModel');
+const { Announcement } = require('../../model/announcementModel');
 
 const getDataInBatches = async (pageNumber) => {
   const batchSize = 15;

@@ -3,9 +3,9 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose')
 const mongoUri = `mongodb+srv://n6situsr2022:1QbAA5b4lBg9c7xX@clustersit.wjuit.mongodb.net/trrappdb?retryWrites=true&w=majority`;
-const annoucement = require('./routes/api/test');
-const test2 = require('./routes/api/page');
-const search2 = require('./routes/api/find2');
+
+const pages = require('./routes/api/page');
+const search = require('./routes/api/find');
 
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
@@ -22,10 +22,8 @@ db.once('open', function () {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-
-app.use('/api/test', annoucement);
-app.use('/api/page', test2);
-app.use('/api/find2', search2);
+app.use('/api/page', pages);
+app.use('/api/find', search);
 
 app.use(express.static(path.join(__dirname, 'build')));
 
