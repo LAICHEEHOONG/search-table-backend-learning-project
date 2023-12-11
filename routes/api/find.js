@@ -1,16 +1,23 @@
 const express = require('express');
 let router = express.Router();
 const { Announcement } = require('../../model/announcementModel');
-const { setEndDate, setStartDate, addOneDay } = require('../../util/tools');
+const { setEndDate, setStartDate } = require('../../util/tools');
 
-
+const batchSize = 15;
+const skipAmount = (pageNumber) => {
+    let result = (pageNumber - 1) * batchSize;
+    return result;
+};
 
 
 router.route('/')
     .get(async (req, res) => {
         try {
-            const annoucementData = await Announcement.find();
-            // console.log(annoucementData);
+            const annoucementData = await Announcement.find()
+                .sort({ created: 'desc' })
+                .skip(skipAmount(searhData.page))
+                .limit(batchSize);;
+         
             res.status(200).json(annoucementData);
         } catch (error) {
             console.log(error);
@@ -18,147 +25,70 @@ router.route('/')
         }
     })
     .post(async (req, res) => {
-        const batchSize = 15;
-        const skipAmount = (pageNumber) => {
-            let result = (pageNumber - 1) * batchSize;
-            return result;
-        };
-        let searhData = req.body.searchData;
+        let data = req.body.searchData;
+        let {text, startDate, endDate, page, targetGroup, status} = data;
+
+        if(startDate) {
+            startDate = setStartDate(startDate);
+        }
+        
+        if(endDate) {
+            endDate = setEndDate(endDate);
+        }
+
+        const query = {};
+
+        if(text) {
+            query.title = { $regex: text, $options: 'i' }
+        }
+
+        if (targetGroup) {
+            query.targetGroup = targetGroup;
+        }
+
+        if(status) {
+            query.status = status;
+        }
+
+        if(startDate && !endDate) {
+            query.created = {
+                $gte: startDate,
+                // $lte: new Date(endDate)
+            };
+        }
+
+        if(!startDate && endDate) {
+            query.created = {
+                $lte: new endDate
+            }
+        }
+
+        if(startDate && endDate) {
+            query.created = {
+                $gte: startDate,
+                $lte: endDate
+            }
+        }
 
         try {
+            const annoucementData = await Announcement
+                                            .find(query)
+                                            .sort({ created: 'desc' })
+                                            .skip(skipAmount(page))
+                                            .limit(batchSize);
 
-            if ((searhData.startDate === '' || !searhData.startDate) && (searhData.endDate === '' || !searhData.endDate)) {
-                const searchText = searhData.text;
-                const annoucementTimeZoneData = await Announcement.find({
-                    $or: [
-                        { content: { $regex: searchText, $options: 'i' } },
-                        { title: { $regex: searchText, $options: 'i' } },
-                        { status: { $regex: searchText, $options: 'i' } },
-                        { targetGroup: { $regex: searchText, $options: 'i' } }
-                    ]
-                }).sort({ created: 'desc' })
-                    .skip(skipAmount(searhData.page))
-                    .limit(batchSize);
+            // Fetch total count for pagination
+            const totalCount = await Announcement.countDocuments(query);
+            const allPage = Math.ceil(totalCount / 15);
 
-                let allPage = await Announcement.find({
-                    $or: [
-                        { content: { $regex: searchText, $options: 'i' } },
-                        { title: { $regex: searchText, $options: 'i' } },
-                        { status: { $regex: searchText, $options: 'i' } },
-                        { targetGroup: { $regex: searchText, $options: 'i' } }
-                    ]
-                })
-
-                allPage = Math.ceil(allPage.length / 15);
-
-                res.json([annoucementTimeZoneData, { allPage }]);
-            } else if (searhData.endDate === '' || !searhData.endDate) {
-                // const startDate = new Date(searhData.startDate);
-                let startDate = setStartDate(searhData.startDate);
-                const searchText = searhData.text;
-                const annoucementTimeZoneData = await Announcement.find({
-                    created: {
-                        $gte: startDate,
-                        // $lte: endDate
-                    },
-                    $or: [
-                        { content: { $regex: searchText, $options: 'i' } },
-                        { title: { $regex: searchText, $options: 'i' } },
-                        { status: { $regex: searchText, $options: 'i' } },
-                        { targetGroup: { $regex: searchText, $options: 'i' } }
-                    ]
-                }).sort({ created: 'desc' })
-                    .skip(skipAmount(searhData.page))
-                    .limit(batchSize);
-
-                let allPage = await Announcement.find({
-                    created: {
-                        $gte: startDate,
-                        // $lte: endDate
-                    },
-                    $or: [
-                        { content: { $regex: searchText, $options: 'i' } },
-                        { title: { $regex: searchText, $options: 'i' } },
-                        { status: { $regex: searchText, $options: 'i' } },
-                        { targetGroup: { $regex: searchText, $options: 'i' } }
-                    ]
-                });
-
-                allPage = Math.ceil(allPage.length / 15);
-
-                res.json([annoucementTimeZoneData, { allPage }]);
-            } else if (searhData.startDate === '' || !searhData.startDate) {
-                let endDate = setEndDate(searhData.endDate);
-                const searchText = searhData.text;
-                const annoucementTimeZoneData = await Announcement.find({
-                    created: {
-                        // $gte: startDate,
-                        $lte: endDate
-                    },
-                    $or: [
-                        { content: { $regex: searchText, $options: 'i' } },
-                        { title: { $regex: searchText, $options: 'i' } },
-                        { status: { $regex: searchText, $options: 'i' } },
-                        { targetGroup: { $regex: searchText, $options: 'i' } }
-                    ]
-                }).sort({ created: 'desc' })
-                    .skip(skipAmount(searhData.page))
-                    .limit(batchSize);
-
-                let allPage = await Announcement.find({
-                    created: {
-                        // $gte: startDate,
-                        $lte: endDate
-                    },
-                    $or: [
-                        { content: { $regex: searchText, $options: 'i' } },
-                        { title: { $regex: searchText, $options: 'i' } },
-                        { status: { $regex: searchText, $options: 'i' } },
-                        { targetGroup: { $regex: searchText, $options: 'i' } }
-                    ]
-                })
-                allPage = Math.ceil(allPage.length / 15);
-                res.json([annoucementTimeZoneData, { allPage }]);
-            } else {
-                const startDate = setStartDate(searhData.startDate);
-                const endDate = setEndDate(searhData.endDate);
-                const searchText = searhData.text;
-                const annoucementTimeZoneData = await Announcement.find({
-                    created: {
-                        $gte: startDate,
-                        $lte: endDate
-                    },
-                    $or: [
-                        { content: { $regex: searchText, $options: 'i' } },
-                        { title: { $regex: searchText, $options: 'i' } },
-                        { status: { $regex: searchText, $options: 'i' } },
-                        { targetGroup: { $regex: searchText, $options: 'i' } }
-                    ]
-                }).sort({ created: 'desc' })
-                    .skip(skipAmount(searhData.page))
-                    .limit(batchSize);
-                let allPage = await Announcement.find({
-                    created: {
-                        $gte: startDate,
-                        $lte: endDate
-                    },
-                    $or: [
-                        { content: { $regex: searchText, $options: 'i' } },
-                        { title: { $regex: searchText, $options: 'i' } },
-                        { status: { $regex: searchText, $options: 'i' } },
-                        { targetGroup: { $regex: searchText, $options: 'i' } }
-                    ]
-                });
-                allPage = Math.ceil(allPage.length / 15);
-                res.json([annoucementTimeZoneData, { allPage }]);
-            }
-
-
+            res.json([annoucementData, { allPage }]);
+            
         } catch (err) {
             console.log(err);
             res.json([[], { allPage: 1 }, { warning: 'post search data error', err }])
         }
     })
+
 
 
 
