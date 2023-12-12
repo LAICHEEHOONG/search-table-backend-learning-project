@@ -59,7 +59,7 @@ router.route('/')
 
         if(!startDate && endDate) {
             query.created = {
-                $lte: new endDate
+                $lte: endDate
             }
         }
 

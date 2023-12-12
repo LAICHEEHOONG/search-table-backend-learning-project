@@ -7,6 +7,7 @@ const mongoUri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${
 
 const pages = require('./routes/api/page');
 const search = require('./routes/api/find');
+const checkStatus = require('./routes/api/checkAllStatus');
 
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
@@ -25,6 +26,7 @@ app.use(express.json());
 
 app.use('/api/page', pages);
 app.use('/api/find', search);
+app.use('/api/checkStatus', checkStatus);
 
 app.use(express.static(path.join(__dirname, 'build')));
 
