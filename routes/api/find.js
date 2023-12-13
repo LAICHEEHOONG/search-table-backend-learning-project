@@ -42,18 +42,17 @@ router.route('/')
             query.title = { $regex: text, $options: 'i' }
         }
 
-        if (targetGroup) {
+        if (targetGroup && targetGroup !== 'All') {
             query.targetGroup = targetGroup;
         }
 
-        if(status) {
+        if(status && status !== 'All') {
             query.status = status;
         }
 
         if(startDate && !endDate) {
             query.created = {
-                $gte: startDate,
-                // $lte: new Date(endDate)
+                $gte: startDate
             };
         }
 
